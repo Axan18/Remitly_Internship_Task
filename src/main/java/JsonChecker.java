@@ -1,8 +1,8 @@
 import com.google.gson.*;
 
+import javax.swing.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,14 +12,30 @@ import java.util.Set;
  * @author Bartosz Janusz
  */
 public class JsonChecker {
-    private JsonObject rootObject;
-
+    private JsonObject rootObject = null;
     /**
-     * Constructor for the JsonChecker class takes a path to a JSON file and parses it into a JsonObject
-     * If the file is not found or is not a valid JSON file, an error message is printed
-     * @param pathToJson path to the JSON file
+     * This method sets the rootObject to the given JSON file
+     * @param pathToJson the path to the JSON file
+     * @throws JsonParsingException if the file is not a valid JSON file
      */
-    public JsonChecker(String pathToJson) {
+    public void setJson(String pathToJson)
+    {
+        try {
+            rootObject = JsonParser.parseReader(new FileReader(pathToJson)).getAsJsonObject();
+        } catch (JsonParseException | FileNotFoundException e) {
+            throw new JsonParsingException("The file is not a valid JSON file: " + e.getMessage(), e);
+        }
+    }
+    /**
+     * This method allows the user to choose a JSON file
+     * @throws JsonParsingException if the file is not a valid JSON file
+     */
+    public void chooseJson()
+    {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new java.io.File("."));
+        fileChooser.showOpenDialog(null);
+        String pathToJson = fileChooser.getSelectedFile().getAbsolutePath();
         try {
             rootObject = JsonParser.parseReader(new FileReader(pathToJson)).getAsJsonObject();
         } catch (JsonParseException | FileNotFoundException e) {
@@ -48,7 +64,7 @@ public class JsonChecker {
      */
     public Boolean isJsonValid() throws IllegalArgumentException
     {
-        if( rootObject == null) return false;
+        if( rootObject == null) throw new IllegalArgumentException("The json file is not set");
         Set<String> topLevelKeys = Set.of("PolicyName", "PolicyDocument"); //AWS::IAM::Role Policy JSON file must have these keys
         mandatoryKeyCheck(rootObject, topLevelKeys);
 
@@ -74,7 +90,7 @@ public class JsonChecker {
      * @return true if the resources contain a single asterisk, false otherwise
      * @see #isJsonValid()
      */
-    public Boolean resourcesContainsAsterisk()
+    public Boolean noAsteriskInResources()
     {
         try {
             if(!isJsonValid()) return true;
