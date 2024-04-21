@@ -49,4 +49,10 @@ public class JsonCheckerTest {
         jsonChecker.setJson("src/test/resources/additionalInvalidKeyInStatement.json");
         assertThrows(IllegalArgumentException.class, () -> jsonChecker.isJsonValid());
     }
+    @Test
+    public void doubleStatementKeyTest() {
+        jsonChecker.setJson("src/test/resources/doubleStatement.json");
+        assertFalse(jsonChecker.noAsteriskInResources());
+    }
+
 }

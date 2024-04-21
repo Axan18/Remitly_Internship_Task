@@ -27,7 +27,7 @@ public class JsonChecker {
         }
     }
     /**
-     * This method allows the user to choose a JSON file
+     * This method allows the user to choose a JSON file using a file chooser
      * @throws JsonParsingException if the file is not a valid JSON file
      */
     public void chooseJson()
@@ -59,7 +59,7 @@ public class JsonChecker {
     }
     /**
      * This method checks if the JSON file is valid with AWS::IAM::Role Policy
-     * @return true if the JSON file is valid, false otherwise
+     * @return true if the JSON file is valid, throws an exception otherwise
      * @throws IllegalArgumentException if the JSON file is not valid
      */
     public Boolean isJsonValid() throws IllegalArgumentException
